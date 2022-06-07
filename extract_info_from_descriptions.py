@@ -71,7 +71,6 @@ def main():
 
     jobs_df = get_jobs_df(raw_jobs_df)
 
-    print(jobs_df)
     jobs_df.to_csv("data/jobs.csv")
 
 
