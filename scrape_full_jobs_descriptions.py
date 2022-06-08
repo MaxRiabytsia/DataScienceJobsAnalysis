@@ -24,17 +24,16 @@ def get_all_page_links(page_number):
 def get_job_info(link):
     request = requests.get(link, "html.parser")
     page = BeautifulSoup(request.content, "html.parser")
-    header = str(page.find("div", {"class": "jobsearch-DesktopStickyContainer"}))
-    body = str(page.find("div", {"id": "jobDescriptionText"}))
-    footer = str(page.find("div", {"class": "jobsearch-JobMetadataFooter"}))
+    job_info = str(page.find("div", {
+        "class": "jobsearch-ViewJobLayout-jobDisplay icl-Grid-col icl-u-xs-span12 icl-u-lg-span7"}))
 
-    return header, body, footer
+    return job_info
 
 
 def main():
-    df = pd.DataFrame(columns=["url", "job_header", "job_body", "job_footer"])
-    page_number = 1
-    while page_number < 5:
+    df = pd.DataFrame(columns=["url", "job_info"])
+    page_number = 10
+    while page_number < 20:
         print({page_number})
         links = get_all_page_links(page_number)
         if links is None:
@@ -42,8 +41,8 @@ def main():
         page_number += 1
         for link in links:
             link = BASE_JOB_URL + link
-            header, body, footer = get_job_info(link)
-            df.loc[df.shape[0]] = pd.Series({"url": link, "job_header": header, "job_body": body, "job_footer": footer})
+            job_info = get_job_info(link)
+            df.loc[df.shape[0]] = pd.Series({"url": link, "job_info": job_info})
 
     df = df.mask(df.eq('None')).dropna().reset_index(drop=True)
     df.to_csv("data/raw_jobs.csv")
