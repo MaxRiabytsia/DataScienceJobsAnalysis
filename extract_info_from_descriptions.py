@@ -153,10 +153,43 @@ def is_internship(job_info):
     return False
 
 
+def get_degree(job_info):
+    page = BeautifulSoup(job_info, 'html.parser')
+    description = page.find("div", {"class": "jobsearch-jobDescriptionText"})
+    description = description.get_text(separator="\n")
+
+    if "bachelor" in description.lower() or "BA" in description or "BS" in description or "b.s." in description.lower():
+        return "Bachelor"
+    elif "master’s" in description.lower() or "ms degree" in description.lower():
+        return "Master"
+    elif "phd" in description.lower() or "doctoral" in description.lower():
+        return "PhD"
+    elif "degree" in description.lower():
+        return "Bachelor"
+    return "No degree"
+
+
+def get_requirements(job_info):
+    page = BeautifulSoup(job_info, 'html.parser')
+    description = page.find("div", {"class": "jobsearch-jobDescriptionText"})
+    description = description.get_text(separator="\n")
+
+    requirements = ["sql", "python", "pandas", "matplotlib", "seaborn", "numpy", "scipy", "tensorflow", "keras",
+                    "pytorch", "scikit-learn", "plotly", " R ", "ggplot2", "r shiny", "sas", "matlab"
+                    "aws", "azure",
+                    "google cloud",  "plotly", "tableau", "power bi",
+                    "spss", "GIS", "stata", "excel", "hadoop", "spark", "docker", "kafka", "airflow",
+                    "web scraping", "bigtable", "dynamodb",
+                    "api",
+                    "rest api", "dbt", "git", "version control", "nlp", "natural language processing",
+                    "computer vision", "regression",
+                    "java", "c++", " C ", "javascript", "go", "scala"]
+
+
 def get_jobs_df(raw_jobs_df):
     jobs_df = pd.DataFrame(columns=["url", "job_title", "company_name", "company_rating", "number_of_reviews",
                                     "annual_salary", "location", "remote", "full-time", "temporary", "internship",
-                                    "years_of_experience", "degree", "requirements"])
+                                    "experience_level", "degree", "requirements"])
 
     for i, job in raw_jobs_df.iterrows():
         job_info = job.job_info
@@ -172,8 +205,8 @@ def get_jobs_df(raw_jobs_df):
             "full-time": is_full_time(job_info),
             "temporary": is_temporary(job_info),
             "internship": is_internship(job_info),
-            "years_of_experience": 0,
-            "degree": 0,
+            "experience_level": job.experience_level,
+            "degree": get_degree(job_info),
             "requirements": 0
         })
 
