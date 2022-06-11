@@ -185,10 +185,12 @@ def get_requirements(job_info):
                     "computer vision", "regression",
                     "java", "c++", " C ", "javascript", "go", "scala"]
 
+    return None
+
 
 def get_jobs_df(raw_jobs_df):
     jobs_df = pd.DataFrame(columns=["url", "job_title", "company_name", "company_rating", "number_of_reviews",
-                                    "annual_salary", "location", "remote", "full-time", "temporary", "internship",
+                                    "annual_salary", "location", "remote", "full_time", "temporary", "internship",
                                     "experience_level", "degree", "requirements"])
 
     for i, job in raw_jobs_df.iterrows():
@@ -202,12 +204,12 @@ def get_jobs_df(raw_jobs_df):
             "annual_salary": get_salary(job_info),
             "location": get_company_location(job_info),
             "remote": is_remote(job_info),
-            "full-time": is_full_time(job_info),
+            "full_time": is_full_time(job_info),
             "temporary": is_temporary(job_info),
             "internship": is_internship(job_info),
             "experience_level": job.experience_level,
             "degree": get_degree(job_info),
-            "requirements": 0
+            "requirements": get_requirements(job_info)
         })
 
     return jobs_df
@@ -223,7 +225,7 @@ def main():
 
     jobs_df = get_jobs_df(raw_jobs_df)
 
-    jobs_df.to_csv("data/jobs.csv", index=False)
+    jobs_df.to_pickle("data/jobs.pkl")
 
 
 if __name__ == "__main__":

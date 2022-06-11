@@ -17,7 +17,7 @@ def create_table(cursor):
     create_table_command = ("CREATE TABLE IF NOT EXISTS raw_jobs (\n"
                             "		url VARCHAR(255) NOT NULL PRIMARY KEY,\n"
                             "		job_info VARCHAR(15000),\n"
-                            "		experience_level VARCHAR(16)\n"
+                            "		experience_level VARCHAR(255)\n"
                             "	)")
     cursor.execute(create_table_command)
     cursor.connection.commit()
