@@ -38,8 +38,8 @@ def main():
     lvl_links = [ENTRY_LEVEL_LINK, MID_LEVEL_LINK, SENIOR_LEVEL_LINK]
     lvl_names = ["Entry level", "Mid level", "Senior level"]
     for lvl_link, lvl_name in zip(lvl_links, lvl_names):
-        page_number = 1
-        while page_number < 5:
+        page_number = 15
+        while page_number < 20:
             print(page_number)
             links = get_all_page_links(page_number, lvl_link)
             if links is None:

@@ -28,7 +28,7 @@ def create_table(cursor):
                             "		internship BOOLEAN,\n"
                             "		experience_level VARCHAR(255),\n"
                             "		degree VARCHAR(255),\n"
-                            "		requirements VARCHAR(255)\n"
+                            "		requirements VARCHAR(1024)\n"
                             "	)")
     cursor.execute(create_table_command)
     cursor.connection.commit()

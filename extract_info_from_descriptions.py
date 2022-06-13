@@ -2,7 +2,25 @@ import pandas as pd
 import pymysql
 from bs4 import BeautifulSoup
 import re
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import RegexpTokenizer
 from constants import *
+
+REQUIREMENTS = [["sql"],
+                ["python", "pandas", "matplotlib", "seaborn", "numpy", "scipy"],
+                ["machine learning with python", "tensorflow", "keras", "pytorch", "scikit-learn"],
+                ["plotly"],
+                ["r", "ggplot2", "r shiny"],
+                ["sas"], ["matlab"],
+                ["cloud technologies", "aws", "azure", "google cloud"],
+                ["plotly"], ["tableau"],
+                ["power bi", "powerbi", "bi"],
+                ["spss"], ["gis"], ["stata"], ["excel"], ["hadoop"], ["spark"], ["docker"], ["hive"], ["hbase"],
+                ["mongodb"], ["cassandra"], ["kafka"], ["airflow"], ["map reduce"], ["web scraping"], ["bigtable"],
+                ["dynamodb"], ["api"], ["rest api"], ["dbt"],
+                ["git", "version control"],
+                ["nlp", "natural language processing"],
+                ["computer vision"], ["regression"], ["java"], ["c++"], ["c"], ["javascript"], ["golang"], ["scala"]]
 
 
 def connect_to_db():
@@ -156,6 +174,8 @@ def is_internship(job_info):
 def get_degree(job_info):
     page = BeautifulSoup(job_info, 'html.parser')
     description = page.find("div", {"class": "jobsearch-jobDescriptionText"})
+    if description is None:
+        return None
     description = description.get_text(separator="\n")
 
     if "bachelor" in description.lower() or "BA" in description or "BS" in description or "b.s." in description.lower():
@@ -169,23 +189,38 @@ def get_degree(job_info):
     return "No degree"
 
 
+def tokenize(text):
+    lst = []
+    tokenizer = RegexpTokenizer(r'\w+')
+    tokenization = tokenizer.tokenize(text)
+    wnl = WordNetLemmatizer()
+
+    for token in tokenization:
+        lst.append(wnl.lemmatize(token.lower()))
+
+    return lst
+
+
 def get_requirements(job_info):
     page = BeautifulSoup(job_info, 'html.parser')
     description = page.find("div", {"class": "jobsearch-jobDescriptionText"})
+    if description is None:
+        return None
     description = description.get_text(separator="\n")
 
-    requirements = ["sql", "python", "pandas", "matplotlib", "seaborn", "numpy", "scipy", "tensorflow", "keras",
-                    "pytorch", "scikit-learn", "plotly", " R ", "ggplot2", "r shiny", "sas", "matlab"
-                    "aws", "azure",
-                    "google cloud",  "plotly", "tableau", "power bi",
-                    "spss", "GIS", "stata", "excel", "hadoop", "spark", "docker", "kafka", "airflow",
-                    "web scraping", "bigtable", "dynamodb",
-                    "api",
-                    "rest api", "dbt", "git", "version control", "nlp", "natural language processing",
-                    "computer vision", "regression",
-                    "java", "c++", " C ", "javascript", "go", "scala"]
+    description = tokenize(description)
 
-    return None
+    requirements = []
+    for requirement in REQUIREMENTS:
+        if requirement in description:
+            requirements.append(requirement.strip())
+
+    requirements = ",".join(requirements)
+
+    if requirements != "":
+        return requirements
+    else:
+        return None
 
 
 def get_jobs_df(raw_jobs_df):
