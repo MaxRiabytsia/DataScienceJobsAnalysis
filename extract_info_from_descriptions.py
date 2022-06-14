@@ -7,20 +7,20 @@ from nltk.tokenize import RegexpTokenizer
 from constants import *
 
 REQUIREMENTS = [["sql"],
-                ["python", "pandas", "matplotlib", "seaborn", "numpy", "scipy"],
+                ["python", "pandas", "matplotlib", "seaborn", "plotly", "numpy", "scipy", "tensorflow",
+                 "keras", "pytorch", "scikit-learn"],
                 ["machine learning with python", "tensorflow", "keras", "pytorch", "scikit-learn"],
-                ["plotly"],
                 ["r", "ggplot2", "r shiny"],
+                ["programming languages", "python", "r", "scala", "java", "c++", "c", "javascript", "golang"],
+                ["data visualization", "matplotlib", "seaborn", "plotly", "tableau", ["power bi", "powerbi", "bi"], ],
                 ["sas"], ["matlab"],
                 ["cloud technologies", "aws", "azure", "google cloud"],
-                ["plotly"], ["tableau"],
-                ["power bi", "powerbi", "bi"],
                 ["spss"], ["gis"], ["stata"], ["excel"], ["hadoop"], ["spark"], ["docker"], ["hive"], ["hbase"],
                 ["mongodb"], ["cassandra"], ["kafka"], ["airflow"], ["map reduce"], ["web scraping"], ["bigtable"],
                 ["dynamodb"], ["api"], ["rest api"], ["dbt"],
                 ["git", "version control"],
                 ["nlp", "natural language processing"],
-                ["computer vision"], ["regression"], ["java"], ["c++"], ["c"], ["javascript"], ["golang"], ["scala"]]
+                ["computer vision"], ["regression"]]
 
 
 def connect_to_db():
