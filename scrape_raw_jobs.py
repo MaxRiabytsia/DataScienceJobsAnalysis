@@ -20,7 +20,7 @@ BASE_JOB_URL = "https://www.indeed.com/viewjob?"
 
 def make_request(url):
     count = 0
-    while count < 3:
+    while count < 2:
         count += 1
         request = requests.get(url, "html.parser")
         print(request.status_code)
@@ -28,7 +28,7 @@ def make_request(url):
             return request
         else:
             print("Sleeping")
-            time.sleep(5)
+            time.sleep(30)
 
     return None
 
@@ -68,14 +68,15 @@ def main():
     lvl_links = [ENTRY_LEVEL_LINK, MID_LEVEL_LINK, SENIOR_LEVEL_LINK]
     lvl_names = ["Entry level", "Mid level", "Senior level"]
     for lvl_link, lvl_name in zip(lvl_links, lvl_names):
-        page_number = 12  # 12 DONE
-        while page_number < 13:
+        page_number = 13  # 14 DONE
+        while page_number < 15:
             print(page_number)
             links = get_all_page_links(page_number, lvl_link)
             if links is None:
                 break
             page_number += 1
             for link in links:
+                time.sleep(2)
                 link = BASE_JOB_URL + link
                 job_info = get_job_info(link)
                 df.loc[df.shape[0]] = pd.Series({"url": link, "job_info": job_info, "experience_level": lvl_name})

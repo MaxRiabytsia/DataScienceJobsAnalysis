@@ -6,21 +6,29 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 from constants import *
 
-REQUIREMENTS = [["sql"],
-                ["python", "pandas", "matplotlib", "seaborn", "plotly", "numpy", "scipy", "tensorflow",
-                 "keras", "pytorch", "scikit-learn"],
-                ["machine learning with python", "tensorflow", "keras", "pytorch", "scikit-learn"],
-                ["r", "ggplot2", "r shiny"],
-                ["programming languages", "python", "r", "scala", "java", "c++", "c", "javascript", "golang"],
-                ["data visualization", "matplotlib", "seaborn", "plotly", "tableau", ["power bi", "powerbi", "bi"], ],
-                ["sas"], ["matlab"],
-                ["cloud technologies", "aws", "azure", "google cloud"],
-                ["spss"], ["gis"], ["stata"], ["excel"], ["hadoop"], ["spark"], ["docker"], ["hive"], ["hbase"],
-                ["mongodb"], ["cassandra"], ["kafka"], ["airflow"], ["map reduce"], ["web scraping"], ["bigtable"],
-                ["dynamodb"], ["api"], ["rest api"], ["dbt"],
-                ["git", "version control"],
-                ["nlp", "natural language processing"],
-                ["computer vision"], ["regression"]]
+REQUIREMENTS = [[["sql"]],
+                [["python"], ["pandas"], ["matplotlib"], ["seaborn"], ["plotly"], ["numpy"], ["scipy"], ["tensorflow"],
+                 ["keras"], ["pytorch"], ["scikit-learn"]],
+                [["machine learning with python"], ["tensorflow"], ["keras"], ["pytorch"],
+                 ["scikit-learn", "scikit learn"]],
+                [["r"], ["ggplot2"], ["r shiny"]],
+                [["programming languages"], ["python"], ["r"], ["scala"], ["matlab"],
+                 ["java"], ["c++"], ["c"], ["javascript"], ["golang"]],
+                [["data visualization"], ["matplotlib"], ["seaborn"], ["plotly"], ["tableau"],
+                 ["power bi", "powerbi", "bi"]],
+                [["statistical software"], ["tableau"], ["power bi", "powerbi", "bi"], ["sas"], ["spss"], ["stata"]],
+                [["cloud technologies"], ["aws"], ["azure"], ["google cloud"]],
+                [["data mining"], ["web scraping"], ["api"]],
+                [["api development"], ["rest api", "restful api"], ["postman"]],
+                [["nosql"], ["bigtable"], ["dynamodb"], ["mongodb"], ["cassandra"], ["hbase"], ],
+                [["data warehouse"], ["dbt", "data build tool"], ["hive"]],
+                [["data pipeline"], ["kafka"], ["airflow"], ["spark", "pyspark"]],
+                [["distributed computing"], ["hadoop"], ["mapreduce"], ["hive"], ["hbase"], ["spark", "pyspark"]],
+                [["microsoft office"], ["excel"], ["powerpoint"], ["ms word", "microsoft word"]],
+                [["application deployment"], ["docker"]],
+                [["git"], ["version control"]],
+                [["ai"], ["deep learning", "neural network", "neural networks"], ["computer vision"], ["regression"],
+                 ["nlp", "natural language processing"]]]
 
 
 def connect_to_db():
@@ -210,10 +218,14 @@ def get_requirements(job_info):
 
     description = tokenize(description)
 
-    requirements = []
-    for requirement in REQUIREMENTS:
-        if requirement in description:
-            requirements.append(requirement.strip())
+    requirements = set()
+    for group_of_requirements in REQUIREMENTS:
+        for requirement in group_of_requirements:
+            for alias in requirement:
+                if alias in description:
+                    requirements.add(requirement[0])
+                    requirements.add(group_of_requirements[0][0])
+                    break
 
     requirements = ",".join(requirements)
 
