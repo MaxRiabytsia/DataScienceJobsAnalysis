@@ -6,30 +6,6 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 from constants import *
 
-REQUIREMENTS = [[["sql"]],
-                [["python"], ["pandas"], ["matplotlib"], ["seaborn"], ["plotly"], ["numpy"], ["scipy"], ["tensorflow"],
-                 ["keras"], ["pytorch"], ["scikit-learn"]],
-                [["machine learning with python"], ["tensorflow"], ["keras"], ["pytorch"],
-                 ["scikit-learn", "scikit learn"]],
-                [["r"], ["ggplot2"], ["r shiny"]],
-                [["programming languages"], ["python"], ["r"], ["scala"], ["matlab"],
-                 ["java"], ["c++"], ["c"], ["javascript"], ["golang"]],
-                [["data visualization"], ["matplotlib"], ["seaborn"], ["plotly"], ["tableau"],
-                 ["power bi", "powerbi", "bi"]],
-                [["statistical software"], ["tableau"], ["power bi", "powerbi", "bi"], ["sas"], ["spss"], ["stata"]],
-                [["cloud technologies"], ["aws"], ["azure"], ["google cloud"]],
-                [["data mining"], ["web scraping"], ["api"]],
-                [["api development"], ["rest api", "restful api"], ["postman"]],
-                [["nosql"], ["bigtable"], ["dynamodb"], ["mongodb"], ["cassandra"], ["hbase"], ],
-                [["data warehouse"], ["dbt", "data build tool"], ["hive"]],
-                [["data pipeline"], ["kafka"], ["airflow"], ["spark", "pyspark"]],
-                [["distributed computing"], ["hadoop"], ["mapreduce"], ["hive"], ["hbase"], ["spark", "pyspark"]],
-                [["microsoft office"], ["excel"], ["powerpoint"], ["ms word", "microsoft word"]],
-                [["application deployment"], ["docker"]],
-                [["git"], ["version control"]],
-                [["ai"], ["deep learning", "neural network", "neural networks"], ["computer vision"], ["regression"],
-                 ["nlp", "natural language processing"]]]
-
 
 def connect_to_db():
     connection = pymysql.connect(host=HOST, user=USERNAME, password=PASSWORD)
@@ -94,19 +70,22 @@ def get_indeed_salary_estimate(job_info):
 
 def get_salary_from_employer(salary):
     salary_text = salary.text
+    print(salary_text)
 
     if '-' in salary_text:
         dash_index = salary_text.find('-')
-        lower_bound = int(re.sub('\D', '', salary_text[:dash_index]))
-        upper_bound = int(re.sub('\D', '', salary_text[dash_index:]))
-        salary = int((lower_bound + upper_bound) / 2)
+        lower_bound = float(re.findall("[-+]?(?:\d*\.\d+|\d+)", salary_text[:dash_index])[0])
+        upper_bound = float(re.findall("[-+]?(?:\d*\.\d+|\d+)", salary_text[dash_index:])[0])
+        salary = float((lower_bound + upper_bound) / 2)
     else:
-        salary = int(re.sub('\D', '', salary_text))
+        salary = float(re.findall("[-+]?(?:\d*\.\d+|\d+)", salary_text)[0])
+
+    print(salary)
 
     if "hour" in salary_text:
         salary = salary * 40 * 52
     elif "week" in salary_text:
-        salary = salary_text * 52
+        salary = salary * 52
     elif "month" in salary_text:
         salary = salary * 12
 

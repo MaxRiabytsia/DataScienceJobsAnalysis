@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import time
+from constants import *
 
 
 LINK = "https://www.indeed.com/jobs?q=Data%20science&vjk=13aca544c07d9f80"
@@ -9,13 +10,6 @@ ENTRY_LEVEL_LINK = "https://www.indeed.com/jobs?q=Data%20science&sc=0kf%3Aexplvl
 MID_LEVEL_LINK = "https://www.indeed.com/jobs?q=Data%20science&sc=0kf%3Aexplvl(MID_LEVEL)%3B&vjk=04020cf4e91f7ca0"
 SENIOR_LEVEL_LINK = "https://www.indeed.com/jobs?q=Data%20science&sc=0kf%3Aexplvl(SENIOR_LEVEL)%3B&vjk=f1b835379c0f1cdd"
 BASE_JOB_URL = "https://www.indeed.com/viewjob?"
-
-
-# def is_captcha(page, class_name):
-#     body = page.find("body", {"class": class_name})
-#     if body is None:
-#         return True
-#     return False
 
 
 def make_request(url):
@@ -28,7 +22,7 @@ def make_request(url):
             return request
         else:
             print("Sleeping")
-            time.sleep(30)
+            time.sleep(10)
 
     return None
 
@@ -66,10 +60,9 @@ def get_job_info(link):
 def main():
     df = pd.DataFrame(columns=["url", "job_info", "experience_level"])
     lvl_links = [ENTRY_LEVEL_LINK, MID_LEVEL_LINK, SENIOR_LEVEL_LINK]
-    lvl_names = ["Entry level", "Mid level", "Senior level"]
-    for lvl_link, lvl_name in zip(lvl_links, lvl_names):
-        page_number = 13  # 14 DONE
-        while page_number < 15:
+    for lvl_link, lvl_name in zip(lvl_links, EXPERIENCE_LEVELS):
+        page_number = 15  # 16 DONE
+        while page_number < 17:
             print(page_number)
             links = get_all_page_links(page_number, lvl_link)
             if links is None:
