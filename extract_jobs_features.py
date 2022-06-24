@@ -58,7 +58,7 @@ def get_indeed_salary_estimate(job_info):
     if ul is None:
         return None
     salary = ul.find_all("li")[1]
-    salary = salary.text
+    salary = salary.text.replace(",", "")
 
     bounds = re.findall("\$\d{1,3}.?\d{1,3}K", salary)
     lower_bound = float(bounds[0][1:-1]) * 1000
@@ -69,9 +69,10 @@ def get_indeed_salary_estimate(job_info):
 
 
 def get_salary_from_employer(salary):
-    salary_text = salary.text
-    print(salary_text)
+    salary_text = salary.text.replace(",", "")
 
+    # if '-' is in salary text, then that is a range of salaries,
+    # and we find the average
     if '-' in salary_text:
         dash_index = salary_text.find('-')
         lower_bound = float(re.findall("[-+]?(?:\d*\.\d+|\d+)", salary_text[:dash_index])[0])
@@ -80,8 +81,7 @@ def get_salary_from_employer(salary):
     else:
         salary = float(re.findall("[-+]?(?:\d*\.\d+|\d+)", salary_text)[0])
 
-    print(salary)
-
+    # transforming salary to annual format
     if "hour" in salary_text:
         salary = salary * 40 * 52
     elif "week" in salary_text:
@@ -94,6 +94,8 @@ def get_salary_from_employer(salary):
 
 def get_salary(job_info):
     page = BeautifulSoup(job_info, 'html.parser')
+    # looking if there is salary from employer
+    # if there is not, looking for Indeed's salary estimate
     salary = page.find("span", {"class": "icl-u-xs-mr--xs attribute_snippet"})
     if salary is None:
         return get_indeed_salary_estimate(job_info)
@@ -163,20 +165,24 @@ def get_degree(job_info):
     description = page.find("div", {"class": "jobsearch-jobDescriptionText"})
     if description is None:
         return None
-    description = description.get_text(separator="\n")
+    description_text = description.get_text(separator="\n")
+    description = tokenize(description_text)
 
-    if "bachelor" in description.lower() or "BA" in description or "BS" in description or "b.s." in description.lower():
+    # we are starting with bachelor beacause when 2 degrees are mentioned in the description (e.g. bachelor and master)
+    # the higher one is ussually 'prefered' not 'required'
+    if "bachelor" in description or "ba" in description or "BS" in description_text.lower() or "b.s." in description:
         return "Bachelor"
-    elif "master’s" in description.lower() or "ms degree" in description.lower():
+    elif "master's" in description_text.lower() or "ms degree" in description:
         return "Master"
-    elif "phd" in description.lower() or "doctoral" in description.lower():
+    elif "phd" in description or "doctoral" in description:
         return "PhD"
-    elif "degree" in description.lower():
+    elif "degree" in description:
         return "Bachelor"
     return "No degree"
 
 
 def tokenize(text):
+    # tokezation and lemmatization of the text
     lst = []
     tokenizer = RegexpTokenizer(r'\w+')
     tokenization = tokenizer.tokenize(text)
@@ -202,6 +208,7 @@ def get_requirements(job_info):
         for requirement in group_of_requirements:
             for alias in requirement:
                 if alias in description:
+                    # when we find a requirement, we also count it as finding a group of requirements
                     requirements.add(requirement[0])
                     requirements.add(group_of_requirements[0][0])
                     break
@@ -248,6 +255,7 @@ def main():
     cursor.execute("USE jobs_db")
 
     raw_jobs_df = pd.read_sql("SELECT * FROM raw_jobs", connection)
+    # raw_jobs_df = pd.read_pickle("data/raw_jobs_copy.pkl")
 
     jobs_df = get_jobs_df(raw_jobs_df)
 

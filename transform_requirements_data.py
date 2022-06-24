@@ -17,6 +17,9 @@ def get_requirements_df(df):
     requirements_df = pd.DataFrame(columns=["group_of_requirements", "requirement", "experience_level", "degree",
                                             "remote", "full_time", "temporary", "internship", "number_of_occurrences"])
 
+    # here we fill in 'requirements' dataset
+    # 'requirements' dataset is a table that keeps track of requirements' occurrences
+    # based on filters such as experience_level, degree, remote, etc.
     for group in REQUIREMENTS:
         for requirement in group:
             for exp_lvl in EXPERIENCE_LEVELS:
@@ -25,10 +28,9 @@ def get_requirements_df(df):
                         for full_time in [True, False]:
                             for temporary in [True, False]:
                                 for internship in [True, False]:
-                                    df0 = df.loc[(df.experience_level == exp_lvl) & (df.degree == degree) & (
-                                                df.remote == remote) &
-                                                 (df.full_time == full_time) & (df.temporary == temporary) & (
-                                                             df.internship == internship)]
+                                    df0 = df.loc[(df.experience_level == exp_lvl) & (df.degree == degree) &
+                                                 (df.remote == remote) & (df.full_time == full_time) &
+                                                 (df.temporary == temporary) & (df.internship == internship)]
 
                                     count = 0
                                     for i, row in df0.iterrows():
@@ -57,6 +59,7 @@ def main():
     cursor = connection.cursor()
     cursor.execute("USE jobs_db")
     df = pd.read_sql("SELECT * FROM jobs", connection)
+    # df = pd.read_pickle("data/jobs.pkl")
 
     requirements_df = get_requirements_df(df)
     requirements_df.to_pickle("data/requirements.pkl")
