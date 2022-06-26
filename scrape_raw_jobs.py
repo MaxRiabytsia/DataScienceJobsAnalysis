@@ -91,8 +91,8 @@ def main():
         # In order to avoid receiving a CAPTCHA I added few time.sleep() functions
         # for a few seconds to imitate human browsing speed.
         time.sleep(5)
-        page_number = 1  # 19 DONE
-        while page_number < 20:
+        page_number = 1  # 59 DONE
+        while True:
             print(page_number)
             # links is None when function detects text that says that this page is the last one
             links = get_all_page_links(page_number, lvl_link)

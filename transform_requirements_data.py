@@ -59,7 +59,6 @@ def main():
     cursor = connection.cursor()
     cursor.execute("USE jobs_db")
     df = pd.read_sql("SELECT * FROM jobs", connection)
-    # df = pd.read_pickle("data/jobs.pkl")
 
     requirements_df = get_requirements_df(df)
     requirements_df.to_pickle("data/requirements.pkl")

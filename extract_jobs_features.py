@@ -160,6 +160,19 @@ def is_internship(job_info):
     return False
 
 
+def tokenize(text):
+    # tokezation and lemmatization of the text
+    lst = []
+    tokenizer = RegexpTokenizer(r'\w+')
+    tokenization = tokenizer.tokenize(text)
+    wnl = WordNetLemmatizer()
+
+    for token in tokenization:
+        lst.append(wnl.lemmatize(token.lower()))
+
+    return lst
+
+
 def get_degree(job_info):
     page = BeautifulSoup(job_info, 'html.parser')
     description = page.find("div", {"class": "jobsearch-jobDescriptionText"})
@@ -179,19 +192,6 @@ def get_degree(job_info):
     elif "degree" in description:
         return "Bachelor"
     return "No degree"
-
-
-def tokenize(text):
-    # tokezation and lemmatization of the text
-    lst = []
-    tokenizer = RegexpTokenizer(r'\w+')
-    tokenization = tokenizer.tokenize(text)
-    wnl = WordNetLemmatizer()
-
-    for token in tokenization:
-        lst.append(wnl.lemmatize(token.lower()))
-
-    return lst
 
 
 def get_requirements(job_info):
@@ -255,7 +255,6 @@ def main():
     cursor.execute("USE jobs_db")
 
     raw_jobs_df = pd.read_sql("SELECT * FROM raw_jobs", connection)
-    # raw_jobs_df = pd.read_pickle("data/raw_jobs_copy.pkl")
 
     jobs_df = get_jobs_df(raw_jobs_df)
 
